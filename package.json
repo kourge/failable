@@ -5,7 +5,9 @@
   "main": "lib/index.js",
   "typings": "lib/index",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "pretest": "typings install",
+    "test": "mocha --require ts-node/register ./spec/**/*.spec.ts",
+    "prebuild": "rm -rf lib && typings install",
     "build": "tsc",
     "ts-npm-lint": "ts-npm-lint"
   },
@@ -20,7 +22,11 @@
   },
   "homepage": "https://github.com/UrbanDoor/failable#readme",
   "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5",
+    "ts-node": "^0.7.1",
     "ts-npm-lint": "^0.1.0",
-    "typescript": "^1.8.9"
+    "typescript": "^1.8.9",
+    "typings": "^0.7.9"
   }
 }
