@@ -1,0 +1,26 @@
+{
+  "name": "failable",
+  "version": "0.0.1",
+  "description": "Provides the Failable<T> type for success states",
+  "main": "lib/index.js",
+  "typings": "lib/index",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "ts-npm-lint": "ts-npm-lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UrbanDoor/failable.git"
+  },
+  "author": "kourge",
+  "private": true,
+  "bugs": {
+    "url": "https://github.com/UrbanDoor/failable/issues"
+  },
+  "homepage": "https://github.com/UrbanDoor/failable#readme",
+  "devDependencies": {
+    "ts-npm-lint": "^0.1.0",
+    "typescript": "^1.8.9"
+  }
+}
