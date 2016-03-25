@@ -3,11 +3,20 @@
     "target": "es5",
     "module": "commonjs",
     "declaration": true,
-    "noImplicitAny": true,
     "noLib": false,
     "outDir": "lib/"
   },
   "files": [
+    "./typings/main.d.ts",
     "./src/index.ts"
-  ]
+  ],
+  "filesGlob": [
+    "./typings/main.d.ts",
+    "!./node_modules/**/*.ts",
+    "!./node_modules/**/*.tsx"
+  ],
+  "compileOnSave": false,
+  "atom": {
+    "rewriteTsconfig": false
+  }
 }
