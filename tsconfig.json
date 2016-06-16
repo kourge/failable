@@ -12,6 +12,8 @@
   ],
   "filesGlob": [
     "./typings/main.d.ts",
+    "./src/*.ts",
+    "./spec/*.ts",
     "!./node_modules/**/*.ts",
     "!./node_modules/**/*.tsx"
   ],
