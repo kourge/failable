@@ -4,7 +4,7 @@ import {toFailable, isSuccess, isFailure} from '../src';
 
 describe('toFailable', () => {
   it('produces a Success<T> when the function returns without throwing', () => {
-    const result = toFailable(() => "foo");
+    const result = toFailable(() => 'foo');
 
     expect(isSuccess(result)).to.be.true;
   });
