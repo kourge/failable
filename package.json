@@ -6,7 +6,7 @@
   "typings": "lib/index",
   "scripts": {
     "pretest": "typings install",
-    "test": "mocha --require ts-node/register ./spec/**/*.spec.ts",
+    "test": "mocha --require ts-node/register ./src/**/*.spec.ts",
     "prebuild": "rm -rf lib && typings install",
     "build": "tsc"
   },
