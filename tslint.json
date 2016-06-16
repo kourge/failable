@@ -6,15 +6,28 @@
       "check-space"
     ],
     "curly": true,
+    "eofline": true,
     "indent": [
       true,
       "spaces"
     ],
+    "new-parens": true,
+    "no-angle-bracket-type-assertion": true,
     "no-arg": true,
-    "no-duplicate-key": true,
+    "no-consecutive-blank-lines": true,
+    "no-console": [
+      true,
+      ["log", "info", "error", "warn"]
+    ],
+    "no-debugger": true,
     "no-eval": true,
+    "no-inferrable-types": [
+      true,
+      "ignore-params"
+    ],
     "no-internal-module": true,
     "no-switch-case-fall-through": true,
+    "no-trailing-whitespace": true,
     "no-var-keyword": true,
     "one-line": [
       true,
@@ -22,6 +35,12 @@
       "check-else",
       "check-open-brace",
       "check-whitespace"
+    ],
+    "quotemark": [
+      true,
+      "single",
+      "jsx-double",
+      "avoid-escape"
     ],
     "radix": true,
     "semicolon": true,
@@ -43,6 +62,7 @@
         "variable-declaration": "nospace"
       }
     ],
+    "use-isnan": true,
     "variable-name": [
       true,
       "check-format",
