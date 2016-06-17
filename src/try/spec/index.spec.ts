@@ -15,6 +15,23 @@ describe('Try', () => {
 
   afterEach(clearAllHandlers);
 
+  describe('_handlersOf', () => {
+    states.forEach(state => {
+      it(`returns an array given a ${state} state`, () => {
+        const result = Try._handlersOf(state);
+
+        expect(Array.isArray(result)).to.be.true;
+      });
+    });
+
+    it('throws given an unknown state', () => {
+      expect(() => {
+        const f = Try._handlersOf as Function;
+        f('foobar');
+      }).to.throw(TypeError);
+    });
+  });
+
   describe('_dispatch', () => {
     states.forEach(state => {
       it(`dispatches ${state} handlers`, () => {

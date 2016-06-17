@@ -47,13 +47,17 @@ export namespace Try {
   };
 
   export function _handlersOf(state: State): Handler<any>[] {
-    return allHandlers[state.toLowerCase()];
+    const handlers = allHandlers[state.toLowerCase()];
+
+    if (handlers === undefined) {
+      throw new TypeError(`${state} is not a valid state`);
+    }
+
+    return handlers;
   }
 
   export function _dispatch(state: State, data: any): void {
-    const handlers = _handlersOf(state) || [];
-
-    for (const handler of handlers) {
+    for (const handler of _handlersOf(state)) {
       handler(data);
     }
   }
@@ -67,9 +71,6 @@ export namespace Try {
 
   function _on(state: State, f: Handler<any>): void {
     const handlers = _handlersOf(state);
-    if (handlers === undefined) {
-      throw new Error(`${state} is not a known state`);
-    }
 
     handlers.push(f);
   }
@@ -83,9 +84,6 @@ export namespace Try {
 
   function _off(state: State, f?: Handler<any>): void {
     const handlers = _handlersOf(state);
-    if (handlers === undefined) {
-      throw new Error(`${state} is not a known state`);
-    }
 
     if (!f) {
       handlers.splice(0, handlers.length);
