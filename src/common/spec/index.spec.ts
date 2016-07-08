@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 
-import {toFailable, isSuccess, isFailure} from '../src';
+import {toFailable, isSuccess, isFailure} from '..';
 
 describe('toFailable', () => {
   it('produces a Success<T> when the function returns without throwing', () => {
