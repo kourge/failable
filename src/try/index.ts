@@ -63,10 +63,10 @@ export namespace Try {
   }
 
   export const on: {
-    (state: 'pending', handler: PendingHandler);
-    (state: 'failure', handler: FailureHandler);
-    <T>(state: 'success', handler: SuccessHandler<T>);
-    (state: State, f: Handler<any>);
+    (state: 'pending', handler: PendingHandler): void;
+    (state: 'failure', handler: FailureHandler): void;
+    <T>(state: 'success', handler: SuccessHandler<T>): void;
+    (state: State, f: Handler<any>): void;
   } = _on;
 
   function _on(state: State, f: Handler<any>): void {
@@ -76,10 +76,10 @@ export namespace Try {
   }
 
   export const off: {
-    (state: 'pending', handler?: PendingHandler);
-    (state: 'failure', handler?: FailureHandler);
-    <T>(state: 'success', handler?: SuccessHandler<T>);
-    (state: State, f?: Handler<any>);
+    (state: 'pending', handler?: PendingHandler): void;
+    (state: 'failure', handler?: FailureHandler): void;
+    <T>(state: 'success', handler?: SuccessHandler<T>): void;
+    (state: State, f?: Handler<any>): void;
   } = _off;
 
   function _off(state: State, f?: Handler<any>): void {

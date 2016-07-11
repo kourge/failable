@@ -22,15 +22,15 @@ export declare namespace Try {
     function _handlersOf(state: State): Handler<any>[];
     function _dispatch(state: State, data: any): void;
     const on: {
-        (state: 'pending', handler: PendingHandler);
-        (state: 'failure', handler: FailureHandler);
-        <T>(state: 'success', handler: SuccessHandler<T>);
-        (state: State, f: Handler<any>);
+        (state: 'pending', handler: PendingHandler): void;
+        (state: 'failure', handler: FailureHandler): void;
+        <T>(state: 'success', handler: SuccessHandler<T>): void;
+        (state: State, f: Handler<any>): void;
     };
     const off: {
-        (state: 'pending', handler?: PendingHandler);
-        (state: 'failure', handler?: FailureHandler);
-        <T>(state: 'success', handler?: SuccessHandler<T>);
-        (state: State, f?: Handler<any>);
+        (state: 'pending', handler?: PendingHandler): void;
+        (state: 'failure', handler?: FailureHandler): void;
+        <T>(state: 'success', handler?: SuccessHandler<T>): void;
+        (state: State, f?: Handler<any>): void;
     };
 }
