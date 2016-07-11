@@ -1,6 +1,6 @@
 {
   "name": "failable",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Provides the Failable<T> type for success states",
   "main": "lib/index.js",
   "typings": "lib/index",
