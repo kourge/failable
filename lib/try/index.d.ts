@@ -2,9 +2,9 @@ import { Failable } from '../common';
 export declare class Try<T> {
     failable: Failable<T>;
     constructor(f: Failable<T> | (() => T));
-    map<A, B, C>({onSuccess, pending, onFailure}: {
-        onSuccess: (data: T) => A;
-        onFailure: (error: Error) => B;
+    on<A, B, C>({success: onSuccess, pending: onPending, failure: onFailure}: {
+        success: (data: T) => A;
+        failure: (error: Error) => B;
         pending?: () => C;
     }): A | B | C;
 }

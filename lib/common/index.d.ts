@@ -1,21 +1,20 @@
-export interface Failable<T> {
-    error?: boolean;
-    data?: T | Error;
-}
-export interface Success<T> extends Failable<T> {
+export interface Success<T> {
+    error: false;
     data: T;
 }
-export interface Failure extends Failable<Error> {
+export interface Pending {
+    error?: undefined;
+    data?: undefined;
+}
+export interface Failure {
+    error: true;
     data: Error;
-    error: boolean;
 }
-export interface Pending<T> extends Failable<T> {
-    data?: T;
-}
+export declare type Failable<T> = Success<T> | Pending | Failure;
+export declare function success<T>(data: T): Success<T>;
+export declare function failure(data: Error): Failure;
+export declare const pending: Pending;
 export declare function isSuccess<T>(f: Failable<T>): f is Success<T>;
-export declare function isFailure(f: Failable<any>): f is Failure;
-export declare function isPending<T>(f: Failable<T>): f is Pending<T>;
-export declare function success<T>(value: T): Success<T>;
-export declare function failure(error: Error): Failure;
-export declare const pending: Pending<any>;
+export declare function isFailure<T>(f: Failable<T>): f is Failure;
+export declare function isPending<T>(f: Failable<T>): f is Pending;
 export declare function toFailable<T>(f: () => T): Failable<T>;
