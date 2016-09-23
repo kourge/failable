@@ -63,8 +63,8 @@ describe('Try', () => {
       const e1 = new Error();
       const e2 = new Error();
       const result: Error[] = [];
-      Try.on('failure', e => result.push(e));
-      Try.on('failure', e => result.push(e2));
+      Try.on('failure', _ => result.push(e1));
+      Try.on('failure', _ => result.push(e2));
 
       new Try(failure(e1));
 
