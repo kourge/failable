@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 
 import {Try} from '..';
-import {pending, failure, success} from '../../common';
+import {pending, failure, success, isFailure} from '../../common';
 
 describe('Try', () => {
   const states: Try.State[] = ['pending', 'failure', 'success'];
@@ -15,7 +15,21 @@ describe('Try', () => {
 
   afterEach(clearAllHandlers);
 
-  describe('_handlersOf', () => {
+  describe('.constructor', () => {
+    it('wraps an existing Failable', () => {
+      const t = new Try(pending);
+
+      expect(t.failable).to.equal(pending);
+    });
+
+    it('evaluates a function when given one', () => {
+      const t = new Try(() => { throw new Error('no meaning found'); });
+
+      expect(isFailure(t.failable)).to.be.true;
+    });
+  });
+
+  describe('._handlersOf', () => {
     states.forEach(state => {
       it(`returns an array given a ${state} state`, () => {
         const result = Try._handlersOf(state);
@@ -32,7 +46,7 @@ describe('Try', () => {
     });
   });
 
-  describe('_dispatch', () => {
+  describe('._dispatch', () => {
     states.forEach(state => {
       it(`dispatches ${state} handlers`, () => {
         const result: number[] = [];
@@ -48,7 +62,7 @@ describe('Try', () => {
     });
   });
 
-  describe('on', () => {
+  describe('.on', () => {
     it('invokes all pending handlers on Try instantiation', () => {
       const result: number[] = [];
       Try.on('pending', () => result.push(1));
@@ -83,7 +97,7 @@ describe('Try', () => {
     });
   });
 
-  describe('off', () => {
+  describe('.off', () => {
     states.forEach(state => {
       const a = () => {};
       const b = () => {};
@@ -109,6 +123,82 @@ describe('Try', () => {
         Try.off(state);
 
         expect(handlers).to.be.empty;
+      });
+    });
+  });
+
+  describe('on', () => {
+    let successCalled = false;
+    let failureCalled = false;
+    let pendingCalled = false;
+
+    function reset() {
+      successCalled = false;
+      failureCalled = false;
+      pendingCalled = false;
+    }
+    beforeEach(reset);
+
+    const options = {
+      success() { successCalled = true; },
+      failure() { failureCalled = true; },
+      pending() { pendingCalled = true; }
+    };
+
+    describe('when success', () => {
+      const t = new Try(success(42));
+
+      it('invokes the success callback', () => {
+        t.on(options);
+        expect(successCalled).to.be.true;
+      });
+
+      it('does not invoke the failure callback', () => {
+        t.on(options);
+        expect(failureCalled).to.be.false;
+      });
+
+      it('does not invoke the pending callback', () => {
+        t.on(options);
+        expect(pendingCalled).to.be.false;
+      });
+    });
+
+    describe('when failure', () => {
+      const t = new Try(failure(new Error('no meaning found')));
+
+      it('does not invoke the success callback', () => {
+        t.on(options);
+        expect(successCalled).to.be.false;
+      });
+
+      it('invokes the failure callback', () => {
+        t.on(options);
+        expect(failureCalled).to.be.true;
+      });
+
+      it('does not invoke the pending callback', () => {
+        t.on(options);
+        expect(pendingCalled).to.be.false;
+      });
+    });
+
+    describe('when pending', () => {
+      const t = new Try(pending);
+
+      it('does not invoke the success callback', () => {
+        t.on(options);
+        expect(successCalled).to.be.false;
+      });
+
+      it('does not invoke the failure callback', () => {
+        t.on(options);
+        expect(failureCalled).to.be.false;
+      });
+
+      it('invokes the pending callback', () => {
+        t.on(options);
+        expect(pendingCalled).to.be.true;
       });
     });
   });
