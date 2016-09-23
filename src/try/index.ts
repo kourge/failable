@@ -27,8 +27,6 @@ export class Try<T> {
     } else if (pending) {
       return pending();
     }
-
-    return undefined;
   }
 }
 

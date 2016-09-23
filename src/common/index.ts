@@ -1,42 +1,43 @@
-export interface Failable<T> {
-  error?: boolean;
-  data?: T | Error;
-}
-
-export interface Success<T> extends Failable<T> {
+export interface Success<T> {
+  error: false;
   data: T;
 }
 
-export interface Failure extends Failable<Error> {
-  data: Error;
-  error: boolean;
+export interface Pending {
+  error?: undefined;
+  data?: undefined;
 }
 
-export interface Pending<T> extends Failable<T> {
-  data?: T;
+export interface Failure {
+  error: true;
+  data: Error;
 }
+
+export type Failable<T> = Success<T> | Pending | Failure;
+
+const freeze = Object.freeze;
+
+export function success<T>(data: T): Success<T> {
+  return freeze<Success<T>>({data, error: false});
+}
+
+export function failure(data: Error): Failure {
+  return freeze<Failure>({data, error: true});
+}
+
+export const pending: Pending = freeze({});
 
 export function isSuccess<T>(f: Failable<T>): f is Success<T> {
-  return !f.error && f.data !== undefined;
+  return f.error === false;
 }
 
-export function isFailure(f: Failable<any>): f is Failure {
-  return !!f.error;
+export function isFailure<T>(f: Failable<T>): f is Failure {
+  return f.error === true;
 }
 
-export function isPending<T>(f: Failable<T>): f is Pending<T> {
-  return !isFailure(f) && f.data === undefined;
+export function isPending<T>(f: Failable<T>): f is Pending {
+  return typeof f.error === 'undefined';
 }
-
-export function success<T>(value: T): Success<T> {
-  return {data: value};
-}
-
-export function failure(error: Error): Failure {
-  return {error: true, data: error};
-}
-
-export const pending: Pending<any> = {data: undefined};
 
 export function toFailable<T>(f: () => T): Failable<T> {
   try {
