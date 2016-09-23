@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 
 import {Try} from '..';
-import {pending, failure, success, isFailure} from '../../common';
+import {Failable, pending, failure, success, isFailure} from '../../common';
 
 describe('Try', () => {
   const states: Try.State[] = ['pending', 'failure', 'success'];
@@ -26,6 +26,12 @@ describe('Try', () => {
       const t = new Try(() => { throw new Error('no meaning found'); });
 
       expect(isFailure(t.failable)).to.be.true;
+    });
+
+    it('throws when given a non-Failable', () => {
+      expect(() => {
+        new Try({error: null} as any as Failable<string>);
+      }).to.throw(TypeError);
     });
   });
 
@@ -200,6 +206,15 @@ describe('Try', () => {
         t.on(options);
         expect(pendingCalled).to.be.true;
       });
+    });
+
+    it('throws when the Try does not wrap a Failable', () => {
+      const t: Try<any> = new Try(pending);
+      t.failable = {error: null} as any as Failable<any>;
+
+      expect(() => {
+        t.on(options);
+      }).to.throw(TypeError);
     });
   });
 });
