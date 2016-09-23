@@ -7,11 +7,9 @@
     "outDir": "lib/"
   },
   "files": [
-    "./typings/main.d.ts",
     "./src/index.ts"
   ],
   "filesGlob": [
-    "./typings/main.d.ts",
     "./src/**/*.ts",
     "!./node_modules/**/*.ts",
     "!./node_modules/**/*.tsx"
