@@ -3,8 +3,7 @@ export interface Success<T> {
     data: T;
 }
 export interface Pending {
-    error?: undefined;
-    data?: undefined;
+    error: null;
 }
 export interface Failure {
     error: true;
