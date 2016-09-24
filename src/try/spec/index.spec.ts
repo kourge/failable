@@ -30,7 +30,7 @@ describe('Try', () => {
 
     it('throws when given a non-Failable', () => {
       expect(() => {
-        new Try({error: null} as any as Failable<string>);
+        new Try({} as any as Failable<string>);
       }).to.throw(TypeError);
     });
   });
@@ -210,7 +210,7 @@ describe('Try', () => {
 
     it('throws when the Try does not wrap a Failable', () => {
       const t: Try<any> = new Try(pending);
-      t.failable = {error: null} as any as Failable<any>;
+      t.failable = {} as any as Failable<any>;
 
       expect(() => {
         t.on(options);
