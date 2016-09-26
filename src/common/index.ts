@@ -14,7 +14,7 @@ export interface Failure {
 
 export type Failable<T> = Success<T> | Pending | Failure;
 
-const freeze = Object.freeze;
+const {freeze} = Object;
 
 export function success<T>(data: T): Success<T> {
   return freeze<Success<T>>({data, error: false});
