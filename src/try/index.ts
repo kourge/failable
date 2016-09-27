@@ -1,4 +1,4 @@
-import {Failable, toFailable, isSuccess, isFailure} from '../common';
+import {Failable, toFailable, isSuccess, isFailure, isPending} from '../common';
 
 export class Try<T> {
   failable: Failable<T>;
@@ -6,16 +6,20 @@ export class Try<T> {
   constructor(f: Failable<T> | (() => T)) {
     this.failable = (f instanceof Function) ? toFailable(f) : f;
 
-    this.map({
-      onFailure: error => Try._dispatch('failure', error),
-      onSuccess: data => Try._dispatch('success', data),
-      pending: () => Try._dispatch('pending', undefined)
-    });
+    try {
+      this.on({
+        failure: error => Try._dispatch('failure', error),
+        success: data => Try._dispatch('success', data),
+        pending: () => Try._dispatch('pending', undefined)
+      });
+    } catch (_) {
+      throw new TypeError(`Invariant violation: ${f} is not a Failable`);
+    }
   }
 
-  map<A, B, C>({onSuccess, pending, onFailure}: {
-    onSuccess: (data: T) => A,
-    onFailure: (error: Error) => B,
+  on<A, B, C>({success: onSuccess, pending: onPending, failure: onFailure}: {
+    success: (data: T) => A,
+    failure: (error: Error) => B,
     pending?: () => C
   }): A | B | C {
     const {failable: f} = this;
@@ -24,11 +28,11 @@ export class Try<T> {
       return onSuccess(f.data);
     } else if (isFailure(f)) {
       return onFailure(f.data);
-    } else if (pending) {
-      return pending();
+    } else if (isPending(f) && onPending) {
+      return onPending();
     }
 
-    return undefined;
+    throw new TypeError('Invariant violation: this Try does not wrap a Failable');
   }
 }
 
