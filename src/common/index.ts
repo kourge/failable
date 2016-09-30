@@ -38,6 +38,12 @@ export function isPending<T>(f: Failable<T>): f is Pending {
   return f.error === null;
 }
 
+export function isFailable<T>(x: any): x is Failable<T> {
+  return 'error' in x && (
+    x.error === false || x.error === true || x.error === null
+  );
+}
+
 export function toFailable<T>(f: () => T): Failable<T> {
   try {
     return success(f());
