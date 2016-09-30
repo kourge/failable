@@ -145,6 +145,11 @@ describe('Try', () => {
     }
     beforeEach(reset);
 
+    const incompleteOptions = {
+      success() { successCalled = true; },
+      failure() { failureCalled = true; }
+    };
+
     const options = {
       success() { successCalled = true; },
       failure() { failureCalled = true; },
@@ -206,15 +211,22 @@ describe('Try', () => {
         t.on(options);
         expect(pendingCalled).to.be.true;
       });
-    });
 
-    it('throws when the Try does not wrap a Failable', () => {
-      const t: Try<any> = new Try(pending);
-      t.failable = {} as any as Failable<any>;
+      it('throws when given an option that does not handle pending', () => {
+        const t: Try<any> = new Try(pending);
 
-      expect(() => {
-        t.on(options);
-      }).to.throw(TypeError);
+        expect(() => {
+          t.on(incompleteOptions);
+        }).to.throw(TypeError);
+      });
+
+      it('does not throw when given an option that handles pending', () => {
+        const t: Try<any> = new Try(pending);
+
+        expect(() => {
+          t.on(options);
+        }).to.not.throw(TypeError);
+      });
     });
   });
 });

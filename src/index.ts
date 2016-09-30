@@ -1,5 +1,5 @@
 export {
-  Failable, toFailable,
+  Failable, isFailable, toFailable,
   Success, Failure, Pending,
   success, failure, pending,
   isSuccess, isFailure, isPending

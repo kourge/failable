@@ -3,7 +3,7 @@ import {expect} from 'chai';
 import {
   success, failure, pending,
   isSuccess, isFailure, isPending,
-  toFailable
+  isFailable, toFailable
 } from '..';
 
 const aSuccess = success(42);
@@ -66,6 +66,24 @@ describe('isPending', () => {
 
   it('returns true for pending', () => {
     expect(isPending(pending)).to.be.true;
+  });
+});
+
+describe('isFailable', () => {
+  it('returns true for a success', () => {
+    expect(isFailable(aSuccess)).to.be.true;
+  });
+
+  it('returns true for a failure', () => {
+    expect(isFailable(aFailure)).to.be.true;
+  });
+
+  it('returns true for pending', () => {
+    expect(isFailable(pending)).to.be.true;
+  });
+
+  it('returns false for an empty object', () => {
+    expect(isFailable({})).to.be.false;
   });
 });
 
