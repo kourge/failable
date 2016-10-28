@@ -2,8 +2,7 @@ import {expect} from 'chai';
 
 import {
   success, failure, pending,
-  isSuccess, isFailure, isPending,
-  isFailable, toFailable
+  isSuccess, isFailure, isPending
 } from '..';
 
 const aSuccess = success(42);
@@ -69,36 +68,3 @@ describe('isPending', () => {
   });
 });
 
-describe('isFailable', () => {
-  it('returns true for a success', () => {
-    expect(isFailable(aSuccess)).to.be.true;
-  });
-
-  it('returns true for a failure', () => {
-    expect(isFailable(aFailure)).to.be.true;
-  });
-
-  it('returns true for pending', () => {
-    expect(isFailable(pending)).to.be.true;
-  });
-
-  it('returns false for an empty object', () => {
-    expect(isFailable({})).to.be.false;
-  });
-});
-
-describe('toFailable', () => {
-  it('produces a Success<T> when the function returns without throwing', () => {
-    const result = toFailable(() => 'foo');
-
-    expect(isSuccess(result)).to.be.true;
-  });
-
-  it('produces a Failure when the the function throws', () => {
-    const result = toFailable((): string => {
-      throw new Error();
-    });
-
-    expect(isFailure(result)).to.be.true;
-  });
-});
