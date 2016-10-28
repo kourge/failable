@@ -1,3 +1,4 @@
+import {Failable} from '../failable';
 
 /**
  * A Success represents a successful value.
@@ -21,12 +22,6 @@ export interface Failure {
   error: true;
   data: Error;
 }
-
-/**
- * A Failable represents a successful value, a pending state, or a failure with an
- * error.
- */
-export type Failable<T> = Success<T> | Pending | Failure;
 
 const {freeze} = Object;
 
@@ -70,25 +65,3 @@ export function isPending<T>(f: Failable<T>): f is Pending {
   return f.error === null;
 }
 
-/**
- * Returns true if the given value qualifies as a Failable.
- */
-export function isFailable<T>(x: any): x is Failable<T> {
-  return 'error' in x && (
-    x.error === false || x.error === true || x.error === null
-  );
-}
-
-/**
- * Converts a function's return value into a Failable. If the function returned
- * successfully, the conversion results in a success, but if the function threw an
- * error, the conversion results in a failure. Note that it is not possible to
- * result in a pending state, since a function call is synchronous.
- */
-export function toFailable<T>(f: () => T): Failable<T> {
-  try {
-    return success(f());
-  } catch (e) {
-    return failure(e);
-  }
-}
