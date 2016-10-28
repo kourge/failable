@@ -214,38 +214,3 @@ that state.
 Given a `State` and any sort of data, invoke all registered handlers of that state
 with the given data where applicable. Used by `Failable.when` to inform listeners.
 
-## Definition
-
-A failable:
-
-- MUST have an `error` property
-
-A failable:
-
-- MAY have a `data` property
-
-### `error`
-
-The `error` property MAY be `true`, `false`, or `null`. It MUST NOT be
-`undefined`.
-
-- If the value is `true`, then the failable is considered a failure.
-- If the value is `false`, then the failable is considered a success.
-- If the value is `null`, then the failable is considered pending.
-
-### `data`
-
-The `data` property MAY be any type of value. By convention, if `error` is
-`true`, then `data` SHOULD be an error object.
-
-## Internals
-
-All failable objects produced by this module are frozen and are therefore
-shallowly immutable. Any object with an `error` property set to `null` is
-considered a pending failable, even though the `pending` constant itself is
-defined as a frozen singleton object.
-
-The `data` property corresponds to the [[PromiseResult]] internal slot as
-defined by the ECMAScript spec. It is recommended that you do not access this
-property directly and instead use a helper function such as `when` or
-`Failable.when`.
