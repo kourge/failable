@@ -1,6 +1,6 @@
 # failable
 
-The `failable` module provides three states that together model operations that
+The `failable` library provides three states that together model operations that
 can fail. Each state comes with a creator function and a predicate function:
 
 - The `success(data)` function takes some `data: T` and creates a `Success<T>`.
@@ -20,7 +20,13 @@ the name `failable`.
   This is called a `Result<T>` and its closest analog is the result of a function
   that can throw.
 
-### `Failable<T>`
+## Installation
+
+This package is [published on npm as `failable`](
+https://www.npmjs.com/package/failable
+). Simply run `npm install --save failable`.
+
+## `Failable<T>`
 
 `Failable<T>` is a plain value analog to `Promise<T>` that can be easily handled
 by functional, immutable moving parts, such as React components and Redux
