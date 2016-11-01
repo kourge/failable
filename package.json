@@ -1,21 +1,22 @@
 {
   "name": "failable",
   "version": "2.0.0",
-  "description": "Provides the Failable<T> type for success states",
+  "description": "Simplify error state handling",
   "main": "lib/index.js",
   "typings": "lib/index",
   "scripts": {
     "test": "mocha --require ts-node/register ./src/**/*.spec.ts",
     "typings": "typings",
     "prebuild": "rm -r ./typings; npm run typings -- install",
-    "build": "tsc"
+    "build": "tsc",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/UrbanDoor/failable.git"
   },
-  "author": "kourge",
-  "private": true,
+  "author": "Urbandoor",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/UrbanDoor/failable/issues"
   },
