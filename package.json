@@ -15,8 +15,8 @@
     "type": "git",
     "url": "git+https://github.com/UrbanDoor/failable.git"
   },
-  "author": "kourge",
-  "private": true,
+  "author": "Urbandoor",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/UrbanDoor/failable/issues"
   },
