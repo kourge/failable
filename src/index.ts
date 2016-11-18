@@ -5,7 +5,7 @@ export {
 } from './common';
 
 export {
-  Failable, isFailable
+  Failable, isFailable, when
 } from './failable';
 
 export {
