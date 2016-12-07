@@ -11,3 +11,10 @@ export {
 export {
   Result, toResult
 } from './result';
+
+export {
+  Loadable,
+  Reloading, Retrying,
+  reloading, retrying,
+  isReloading, isRetrying
+} from './loadable';
