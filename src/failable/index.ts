@@ -2,6 +2,7 @@ import {
   Success, Pending, Failure,
   isSuccess, isPending, isFailure
 } from '../common';
+import {Dispatcher, Handler} from '../dispatcher';
 
 /**
  * A Failable represents a successful value, a pending state, or a failure with an
@@ -28,6 +29,11 @@ export namespace Failable {
     pending?: () => C;
   }
 
+  export type State = 'pending' | 'failure' | 'success';
+  const states: State[] = ['pending', 'failure', 'success'];
+
+  const dispatcher = new Dispatcher<State>(states);
+
   const dispatchOptions: WhenOptions<any, void, void, void> = {
     success: (data: any) => dispatch('success', data),
     pending: () => dispatch('pending', undefined),
@@ -45,36 +51,11 @@ export namespace Failable {
    * allowing observers access to every failable that goes through it.
    */
   export function when<T, A, B, C>(
-    f: Failable<T>, 
+    f: Failable<T>,
     options: WhenOptions<T, A, B, C>
   ): A | B | C {
     _when(f, dispatchOptions);
     return _when(f, options);
-  }
-
-  export interface Handler<T> {
-    (a: T): any;
-  }
-
-  export type State = 'pending' | 'failure' | 'success';
-
-  const allHandlers: {[key: string]: Handler<any>[]} = {
-    pending: [], failure: [], success: []
-  };
-
-  /**
-   * An internal function that returns the raw handler array of a given state.
-   * Do not mutate the return value of this function unless you know what you are
-   * doing.
-   */
-  export function _handlersOf(state: State): Handler<any>[] {
-    const handlers = allHandlers[state.toLowerCase()];
-
-    if (handlers === undefined) {
-      throw new TypeError(`${state} is not a valid state`);
-    }
-
-    return handlers;
   }
 
   /**
@@ -82,9 +63,7 @@ export namespace Failable {
    * that state with said data, in the order of registration.
    */
   export function dispatch(state: State, data: any): void {
-    for (const handler of _handlersOf(state)) {
-      handler(data);
-    }
+    return dispatcher.dispatch(state, data);
   }
 
   /**
@@ -97,9 +76,7 @@ export namespace Failable {
    * log every error contained in any failure Failable passed to `Failable.when`.
    */
   export function addListener(state: State, f: Handler<any>): void {
-    const handlers = _handlersOf(state);
-
-    handlers.push(f);
+    return dispatcher.addListener(state, f);
   }
 
   /**
@@ -108,18 +85,7 @@ export namespace Failable {
    * function.
    */
   export function removeListener(state: State, f?: Handler<any>): void {
-    const handlers = _handlersOf(state);
-
-    if (!f) {
-      handlers.splice(0, handlers.length);
-      return;
-    }
-
-    for (let i = 0; i < handlers.length; i++) {
-      if (handlers[i] === f) {
-        handlers.splice(i, 1);
-      }
-    }
+    return dispatcher.removeListener(state, f);
   }
 }
 
