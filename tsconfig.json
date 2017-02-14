@@ -11,12 +11,10 @@
     "outDir": "lib/"
   },
   "files": [
-    "./src/index.ts",
-    "./typings/index.d.ts"
+    "./src/index.ts"
   ],
   "filesGlob": [
     "./src/**/*.ts",
-    "./typings/index.d.ts",
     "!./node_modules/**/*.ts",
     "!./node_modules/**/*.tsx"
   ],
