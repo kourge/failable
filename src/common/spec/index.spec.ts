@@ -67,4 +67,3 @@ describe('isPending', () => {
     expect(isPending(pending)).to.be.true;
   });
 });
-

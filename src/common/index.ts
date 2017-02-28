@@ -64,4 +64,3 @@ export function isFailure<T>(f: Failable<T>): f is Failure {
 export function isPending<T>(f: Failable<T>): f is Pending {
   return f.error === null;
 }
-
