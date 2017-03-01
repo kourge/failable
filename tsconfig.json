@@ -10,13 +10,12 @@
     "noLib": false,
     "outDir": "lib/"
   },
-  "files": [
-    "./src/index.ts"
+  "include": [
+    "src/**/*"
   ],
-  "filesGlob": [
-    "./src/**/*.ts",
-    "!./node_modules/**/*.ts",
-    "!./node_modules/**/*.tsx"
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
   ],
   "compileOnSave": false,
   "atom": {
