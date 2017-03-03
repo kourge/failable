@@ -1,15 +1,20 @@
 import {IObservableValue, observable, action, computed} from 'mobx';
 
 /**
- * Failable is a reactive MobX counterpart to a Promise. It has three states:
- * pending, success, and failure. When constructed, it starts out in the pending
- * state.
+ * AbstractFailable is an imcomplete superclass of Failable designed to work
+ * around TypeScript-related subclassing issues.
  *
- * The action methods `success`, `failure`, and `pending` are used to change
- * between these states. The computed properties indicate the current state,
- * but for day-to-day usage, prefer the `match` method.
+ * When MobX creates an action on a property, it defines a setter on that
+ * property to prevent any external consumers from overwriting that property.
+ * This directly clashes with the way TypeScript emits subclassing code below
+ * ES6. The net effect is that any class method decorated as a MobX action
+ * cannot be overridden in TypeScript. The compilation will succeed, but at
+ * runtime it violates the MobX invariant and fails.
+ *
+ * Curiously, attempting this with a native Node class succeeds, which indicates
+ * a difference in how subclasses are implemented across runtimes.
  */
-export class Failable<T> {
+export class AbstractFailable<T> {
   protected data: IObservableValue<T | Error | undefined>;
   protected state: IObservableValue<Failable.State>;
 
@@ -37,7 +42,7 @@ export class Failable<T> {
    * Sets this Failable to a success.
    * @param data The value associated with the success.
    */
-  @action.bound success(data: T): this {
+  protected success(data: T): this {
     this.state.set(State.success);
     this.data.set(data);
     return this;
@@ -47,7 +52,7 @@ export class Failable<T> {
    * Sets this Failable to a failure.
    * @param error The error associated with the failure.
    */
-  @action.bound failure(error: Error): this {
+  protected failure(error: Error): this {
     this.state.set(State.failure);
     this.data.set(error);
     return this;
@@ -56,7 +61,7 @@ export class Failable<T> {
   /**
    * Sets this Failable to pending.
    */
-  @action.bound pending(): this {
+  protected pending(): this {
     this.state.set(State.pending);
     this.data.set(undefined);
     return this;
@@ -77,6 +82,40 @@ export class Failable<T> {
       case State.failure: return failure(data as Error);
       case State.pending: return pending();
     }
+  }
+}
+
+/**
+ * Failable is a reactive MobX counterpart to a Promise. It has three states:
+ * pending, success, and failure. When constructed, it starts out in the pending
+ * state.
+ *
+ * The action methods `success`, `failure`, and `pending` are used to change
+ * between these states. The computed properties indicate the current state,
+ * but for day-to-day usage, prefer the `match` method.
+ */
+export class Failable<T> extends AbstractFailable<T> {
+  /**
+   * Sets this Failable to a success.
+   * @param data The value associated with the success.
+   */
+  @action.bound public success(data: T): this {
+    return super.success(data);
+  }
+
+  /**
+   * Sets this Failable to a failure.
+   * @param error The error associated with the failure.
+   */
+  @action.bound public failure(error: Error): this {
+    return super.failure(error);
+  }
+
+  /**
+   * Sets this Failable to pending.
+   */
+  @action.bound public pending(): this {
+    return super.pending();
   }
 }
 

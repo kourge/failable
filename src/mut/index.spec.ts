@@ -1,20 +1,75 @@
 import {expect} from 'chai';
-import {computed, useStrict} from 'mobx';
+import {computed, action, useStrict} from 'mobx';
 
-import {Failable as F} from './';
+import {Failable as F, AbstractFailable as AF} from './';
+
+const empty = () => {};
+const successValue = 3;
+const failureValue = new Error();
 
 useStrict(true);
 
-const empty = () => {};
+describe('AbstractFailable (mutable)', () => {
+  class AbstractFailable<T> extends AF<T> {
+    called = false;
+    @computed get internalData() { return this.data; }
+    @computed get internalState() { return this.state; }
+  }
 
-class Failable<T> extends F<T> {
-  @computed get internalData() { return this.data; }
-  @computed get internalState() { return this.state; }
-}
+  it('provides a working success super method', () => {
+    class G<T> extends AbstractFailable<T> {
+      @action.bound success(data: T) {
+        super.success(data);
+        this.called = true;
+        return this;
+      }
+    }
+    const g = new G();
+    g.success(successValue);
+
+    expect(g.internalState.get()).to.eq(F.State.success);
+    expect(g.internalData.get()).to.eq(successValue);
+    expect(g.called).to.be.true;
+  });
+
+  it('provides a working failure super method', () => {
+    class G<T> extends AbstractFailable<T> {
+      @action.bound failure(error: Error) {
+        super.failure(error);
+        this.called = true;
+        return this;
+      }
+    }
+    const g = new G();
+    g.failure(failureValue);
+
+    expect(g.internalState.get()).to.eq(F.State.failure);
+    expect(g.internalData.get()).to.eq(failureValue);
+    expect(g.called).to.be.true;
+  });
+
+  it('provides a working pending super method', () => {
+    class G<T> extends AbstractFailable<T> {
+      @action.bound pending() {
+        super.pending();
+        this.called = true;
+        return this;
+      }
+    }
+    const g = new G();
+    g.pending();
+
+    expect(g.internalState.get()).to.eq(F.State.pending);
+    expect(g.called).to.be.true;
+  });
+});
 
 describe('Failable (mutable)', () => {
-  const successValue = 3;
-  const failureValue = new Error();
+  class Failable<T> extends F<T> {
+    @computed get internalData() { return this.data; }
+    @computed get internalState() { return this.state; }
+  }
+
   const pending = new Failable<number>();
   const success = new Failable<number>().success(successValue);
   const failure = new Failable<number>().failure(failureValue);
