@@ -1,7 +1,7 @@
 import {expect} from 'chai';
-import {computed, action, useStrict} from 'mobx';
+import {computed, useStrict} from 'mobx';
 
-import {Failable as F, AbstractFailable as AF} from './';
+import {Failable as F} from './';
 
 const empty = () => {};
 const successValue = 3;
@@ -9,65 +9,19 @@ const failureValue = new Error();
 
 useStrict(true);
 
-describe('AbstractFailable (mutable)', () => {
-  class AbstractFailable<T> extends AF<T> {
-    called = false;
-    @computed get internalData() { return this.data; }
-    @computed get internalState() { return this.state; }
-  }
-
-  it('provides a working success super method', () => {
-    class G<T> extends AbstractFailable<T> {
-      @action.bound success(data: T) {
-        super.success(data);
-        this.called = true;
-        return this;
-      }
-    }
-    const g = new G();
-    g.success(successValue);
-
-    expect(g.internalState.get()).to.eq(F.State.success);
-    expect(g.internalData.get()).to.eq(successValue);
-    expect(g.called).to.be.true;
-  });
-
-  it('provides a working failure super method', () => {
-    class G<T> extends AbstractFailable<T> {
-      @action.bound failure(error: Error) {
-        super.failure(error);
-        this.called = true;
-        return this;
-      }
-    }
-    const g = new G();
-    g.failure(failureValue);
-
-    expect(g.internalState.get()).to.eq(F.State.failure);
-    expect(g.internalData.get()).to.eq(failureValue);
-    expect(g.called).to.be.true;
-  });
-
-  it('provides a working pending super method', () => {
-    class G<T> extends AbstractFailable<T> {
-      @action.bound pending() {
-        super.pending();
-        this.called = true;
-        return this;
-      }
-    }
-    const g = new G();
-    g.pending();
-
-    expect(g.internalState.get()).to.eq(F.State.pending);
-    expect(g.called).to.be.true;
-  });
-});
-
 describe('Failable (mutable)', () => {
   class Failable<T> extends F<T> {
     @computed get internalData() { return this.data; }
     @computed get internalState() { return this.state; }
+
+    calledSuccess = false;
+    didBecomeSuccess(_: T) { this.calledSuccess = true; }
+
+    calledFailure = false;
+    didBecomeFailure(_: Error) { this.calledFailure = true; }
+
+    calledPending = false;
+    didBecomePending() { this.calledPending = true; }
   }
 
   const pending = new Failable<number>();
@@ -90,6 +44,12 @@ describe('Failable (mutable)', () => {
     it('sets the internal data to the given value', () => {
       expect(success.internalData.get()).to.eq(successValue);
     });
+
+    it('invokes didBecomeSuccess', () => {
+      expect(success.calledSuccess).to.be.true;
+      expect(success.calledFailure).to.be.false;
+      expect(success.calledPending).to.be.false;
+    });
   });
 
   describe('failure', () => {
@@ -100,6 +60,12 @@ describe('Failable (mutable)', () => {
     it('sets the internal data to the given value', () => {
       expect(failure.internalData.get()).to.eq(failureValue);
     });
+
+    it('invokes didBecomeFailure', () => {
+      expect(failure.calledSuccess).to.be.false;
+      expect(failure.calledFailure).to.be.true;
+      expect(failure.calledPending).to.be.false;
+    });
   });
 
   describe('pending', () => {
@@ -107,6 +73,12 @@ describe('Failable (mutable)', () => {
 
     it('sets the internal state to "pending"', () => {
       expect(f.internalState.get()).to.eq(Failable.State.pending);
+    });
+
+    it('invokes didBecomePending', () => {
+      expect(f.calledSuccess).to.be.false;
+      expect(f.calledFailure).to.be.false;
+      expect(f.calledPending).to.be.true;
     });
   });
 
