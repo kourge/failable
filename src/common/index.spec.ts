@@ -3,7 +3,7 @@ import {expect} from 'chai';
 import {
   success, failure, pending,
   isSuccess, isFailure, isPending
-} from '..';
+} from './';
 
 const aSuccess = success(42);
 const aFailure = failure(new Error('no meaning found'));

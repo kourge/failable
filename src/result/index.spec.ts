@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 
-import {Result} from '..';
-import {isSuccess, isFailure} from '../../common';
+import {Result} from './';
+import {isSuccess, isFailure} from '../common';
 
 describe('Result.from', () => {
   it('produces a Success<T> when the function returns without throwing', () => {
