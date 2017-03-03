@@ -24,10 +24,6 @@ describe('Failable (mutable)', () => {
     didBecomePending() { this.calledPending = true; }
   }
 
-  const pending = new Failable<number>();
-  const success = new Failable<number>().success(successValue);
-  const failure = new Failable<number>().failure(failureValue);
-
   describe('constructor', () => {
     const f = new Failable<void>();
 
@@ -37,39 +33,46 @@ describe('Failable (mutable)', () => {
   });
 
   describe('success', () => {
+    let f: Failable<number>;
+    beforeEach(() => f = new Failable<number>().success(successValue));
+
     it('sets the internal state to "success"', () => {
-      expect(success.internalState.get()).to.eq(Failable.State.success);
+      expect(f.internalState.get()).to.eq(Failable.State.success);
     });
 
     it('sets the internal data to the given value', () => {
-      expect(success.internalData.get()).to.eq(successValue);
+      expect(f.internalData.get()).to.eq(successValue);
     });
 
     it('invokes didBecomeSuccess', () => {
-      expect(success.calledSuccess).to.be.true;
-      expect(success.calledFailure).to.be.false;
-      expect(success.calledPending).to.be.false;
+      expect(f.calledSuccess).to.be.true;
+      expect(f.calledFailure).to.be.false;
+      expect(f.calledPending).to.be.false;
     });
   });
 
   describe('failure', () => {
+    let f: Failable<number>;
+    beforeEach(() => f = new Failable<number>().failure(failureValue));
+
     it('sets the internal state to "failure"', () => {
-      expect(failure.internalState.get()).to.eq(Failable.State.failure);
+      expect(f.internalState.get()).to.eq(Failable.State.failure);
     });
 
     it('sets the internal data to the given value', () => {
-      expect(failure.internalData.get()).to.eq(failureValue);
+      expect(f.internalData.get()).to.eq(failureValue);
     });
 
     it('invokes didBecomeFailure', () => {
-      expect(failure.calledSuccess).to.be.false;
-      expect(failure.calledFailure).to.be.true;
-      expect(failure.calledPending).to.be.false;
+      expect(f.calledSuccess).to.be.false;
+      expect(f.calledFailure).to.be.true;
+      expect(f.calledPending).to.be.false;
     });
   });
 
   describe('pending', () => {
-    const f = new Failable<number>().pending();
+    let f: Failable<number>;
+    beforeEach(() => f = new Failable<number>().pending());
 
     it('sets the internal state to "pending"', () => {
       expect(f.internalState.get()).to.eq(Failable.State.pending);
@@ -83,48 +86,61 @@ describe('Failable (mutable)', () => {
   });
 
   describe('isSuccess', () => {
+    let f: Failable<number>;
+    beforeEach(() => f = new Failable<number>().success(successValue));
+
     it('is true when success', () => {
-      expect(success.isSuccess).to.be.true;
+      expect(f.isSuccess).to.be.true;
     });
 
     it('is false when failure', () => {
-      expect(success.isFailure).to.be.false;
+      expect(f.isFailure).to.be.false;
     });
 
     it('is false when pending', () => {
-      expect(success.isPending).to.be.false;
+      expect(f.isPending).to.be.false;
     });
   });
 
   describe('isFailure', () => {
+    let f: Failable<number>;
+    beforeEach(() => f = new Failable<number>().failure(failureValue));
+
     it('is false when success', () => {
-      expect(failure.isSuccess).to.be.false;
+      expect(f.isSuccess).to.be.false;
     });
 
     it('is true when failure', () => {
-      expect(failure.isFailure).to.be.true;
+      expect(f.isFailure).to.be.true;
     });
 
     it('is false when pending', () => {
-      expect(failure.isPending).to.be.false;
+      expect(f.isPending).to.be.false;
     });
   });
 
   describe('isPending', () => {
+    let f: Failable<number>;
+    beforeEach(() => f = new Failable<number>().pending());
+
     it('is false when success', () => {
-      expect(pending.isSuccess).to.be.false;
+      expect(f.isSuccess).to.be.false;
     });
 
     it('is false when failure', () => {
-      expect(pending.isFailure).to.be.false;
+      expect(f.isFailure).to.be.false;
     });
 
     it('is true when pending', () => {
-      expect(pending.isPending).to.be.true;
+      expect(f.isPending).to.be.true;
     });
   });
 
   describe('match', () => {
+    const pending = new Failable<number>();
+    const success = new Failable<number>().success(successValue);
+    const failure = new Failable<number>().failure(failureValue);
+
     it('invokes the pending handler', () => {
       let called = false;
       pending.match({
