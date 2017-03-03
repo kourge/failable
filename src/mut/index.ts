@@ -1,4 +1,4 @@
-import {IObservableValue, observable, action, computed} from 'mobx';
+import {observable, action, computed} from 'mobx';
 
 /**
  * Failable is a reactive MobX counterpart to a Promise. It has three states:
@@ -10,28 +10,23 @@ import {IObservableValue, observable, action, computed} from 'mobx';
  * but for day-to-day usage, prefer the `match` method.
  */
 export class Failable<T> {
-  protected data: IObservableValue<T | Error | undefined>;
-  protected state: IObservableValue<Failable.State>;
-
-  constructor() {
-    this.data = observable.box(undefined, 'data');
-    this.state = observable.box<Failable.State>(State.pending, 'state');
-  }
+  @observable protected data: T | Error | undefined = undefined;
+  @observable protected state: Failable.State = State.pending;
 
   /**
    * Indicates if this Failable is a success.
    */
-  @computed get isSuccess(): boolean { return this.state.get() === State.success; }
+  @computed get isSuccess(): boolean { return this.state === State.success; }
 
   /**
    * Indicates if this Failable is a failure.
    */
-  @computed get isFailure(): boolean { return this.state.get() === State.failure; }
+  @computed get isFailure(): boolean { return this.state === State.failure; }
 
   /**
    * Indicates if this Failable is pending.
    */
-  @computed get isPending(): boolean { return this.state.get() === State.pending; }
+  @computed get isPending(): boolean { return this.state === State.pending; }
 
   /**
    * Sets this Failable to a success.
@@ -39,8 +34,8 @@ export class Failable<T> {
    * @returns This, enabling chaining.
    */
   @action.bound success(data: T): this {
-    this.state.set(State.success);
-    this.data.set(data);
+    this.state = State.success;
+    this.data = data;
     this.didBecomeSuccess(data);
     return this;
   }
@@ -57,8 +52,8 @@ export class Failable<T> {
    * @returns This, enabling chaining.
    */
   @action.bound failure(error: Error): this {
-    this.state.set(State.failure);
-    this.data.set(error);
+    this.state = State.failure;
+    this.data = error;
     this.didBecomeFailure(error);
     return this;
   }
@@ -74,8 +69,8 @@ export class Failable<T> {
    * @returns This, enabling chaining.
    */
   @action.bound pending(): this {
-    this.state.set(State.pending);
-    this.data.set(undefined);
+    this.state = State.pending;
+    this.data = undefined;
     this.didBecomePending();
     return this;
   }
@@ -93,10 +88,10 @@ export class Failable<T> {
    * @returns The return value of whichever callback was selected.
    */
   match<A, B, C>(options: Failable.MatchOptions<T, A, B, C>): A | B | C {
-    const data = this.data.get();
+    const data = this.data;
     const {success, failure, pending} = options;
 
-    switch (this.state.get()) {
+    switch (this.state) {
       case State.success: return success(data as T);
       case State.failure: return failure(data as Error);
       case State.pending: return pending();

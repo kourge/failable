@@ -11,8 +11,8 @@ useStrict(true);
 
 describe('Failable (mutable)', () => {
   class Failable<T> extends F<T> {
-    @computed get internalData() { return this.data; }
-    @computed get internalState() { return this.state; }
+    @computed get internalData(): T | Error | undefined { return this.data; }
+    @computed get internalState(): F.State { return this.state; }
 
     calledSuccess = false;
     didBecomeSuccess(_: T) { this.calledSuccess = true; }
@@ -28,7 +28,7 @@ describe('Failable (mutable)', () => {
     const f = new Failable<void>();
 
     it('initializes the state as "pending"', () => {
-      expect(f.internalState.get()).to.eq(Failable.State.pending);
+      expect(f.internalState).to.eq(Failable.State.pending);
     });
   });
 
@@ -37,11 +37,11 @@ describe('Failable (mutable)', () => {
     beforeEach(() => f = new Failable<number>().success(successValue));
 
     it('sets the internal state to "success"', () => {
-      expect(f.internalState.get()).to.eq(Failable.State.success);
+      expect(f.internalState).to.eq(Failable.State.success);
     });
 
     it('sets the internal data to the given value', () => {
-      expect(f.internalData.get()).to.eq(successValue);
+      expect(f.internalData).to.eq(successValue);
     });
 
     it('invokes didBecomeSuccess', () => {
@@ -56,11 +56,11 @@ describe('Failable (mutable)', () => {
     beforeEach(() => f = new Failable<number>().failure(failureValue));
 
     it('sets the internal state to "failure"', () => {
-      expect(f.internalState.get()).to.eq(Failable.State.failure);
+      expect(f.internalState).to.eq(Failable.State.failure);
     });
 
     it('sets the internal data to the given value', () => {
-      expect(f.internalData.get()).to.eq(failureValue);
+      expect(f.internalData).to.eq(failureValue);
     });
 
     it('invokes didBecomeFailure', () => {
@@ -75,7 +75,7 @@ describe('Failable (mutable)', () => {
     beforeEach(() => f = new Failable<number>().pending());
 
     it('sets the internal state to "pending"', () => {
-      expect(f.internalState.get()).to.eq(Failable.State.pending);
+      expect(f.internalState).to.eq(Failable.State.pending);
     });
 
     it('invokes didBecomePending', () => {
