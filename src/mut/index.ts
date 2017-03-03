@@ -36,6 +36,7 @@ export class Failable<T> {
   /**
    * Sets this Failable to a success.
    * @param data The value associated with the success.
+   * @returns This, enabling chaining.
    */
   @action.bound success(data: T): this {
     this.state.set(State.success);
@@ -53,6 +54,7 @@ export class Failable<T> {
   /**
    * Sets this Failable to a failure.
    * @param error The error associated with the failure.
+   * @returns This, enabling chaining.
    */
   @action.bound failure(error: Error): this {
     this.state.set(State.failure);
@@ -69,6 +71,7 @@ export class Failable<T> {
 
   /**
    * Sets this Failable to pending.
+   * @returns This, enabling chaining.
    */
   @action.bound pending(): this {
     this.state.set(State.pending);
@@ -85,9 +88,9 @@ export class Failable<T> {
 
   /**
    * Invokes one of the provided callbacks that corresponds this Failable's
-   * current state, and passes along the return value of whichever callback
-   * was selected.
+   * current state.
    * @param options An object of callbacks to be invoked according to the state.
+   * @returns The return value of whichever callback was selected.
    */
   match<A, B, C>(options: Failable.MatchOptions<T, A, B, C>): A | B | C {
     const data = this.data.get();
