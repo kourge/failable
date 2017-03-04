@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {computed, useStrict} from 'mobx';
+import {useStrict, computed, when} from 'mobx';
 
 import {Failable as F} from './';
 
@@ -211,6 +211,42 @@ describe('Failable (mutable)', () => {
       });
 
       expect(result).to.be.empty;
+    });
+  });
+
+  describe('accept', () => {
+    const never = new Promise<never>((_resolve, _reject) => {});
+    const resolved = Promise.resolve(successValue);
+    const rejected = Promise.reject(failureValue);
+    // Suppress PromiseRejectionHandledWarning in node:
+    rejected.catch(() => {});
+
+    let f: Failable<number>;
+    beforeEach(() => f = new Failable<number>());
+
+    it('first transitions to "pending"', () => {
+      f.success(successValue);
+      f.accept(never);
+
+      expect(f.internalState).to.eq(Failable.State.pending);
+    });
+
+    it('transitions to "success" when the promise is fulfilled', () => {
+      f.accept(resolved);
+
+      when(
+        () => !f.isPending,
+        () => expect(f.internalState).to.eq(Failable.State.success)
+      );
+    });
+
+    it('transitions to "failure" when the promise is rejected', () => {
+      f.accept(rejected);
+
+      when(
+        () => !f.isPending,
+        () => expect(f.internalState).to.eq(Failable.State.failure)
+      );
     });
   });
 });

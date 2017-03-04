@@ -97,6 +97,19 @@ export class Failable<T> {
       case State.pending: return pending();
     }
   }
+
+  /**
+   * Accepts a promise by immediately setting this Failable to pending, and then
+   * either setting this Failable to a success if the promise was fulfilled, or
+   * setting this Failable to a failure if the promise was rejected.
+   * @param promise A promise to be accepted
+   * @returns This, enabling chaining.
+   */
+  accept(promise: PromiseLike<T>): this {
+    this.pending();
+    Promise.resolve(promise).then(this.success, this.failure);
+    return this;
+  }
 }
 
 export namespace Failable {
