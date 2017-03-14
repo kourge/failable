@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 
-import {Failable} from '..';
-import {success, pending, failure} from '../../common';
+import {Failable} from './';
+import {success, pending, failure} from '../common';
 
 const aSuccess = success(42);
 const aFailure = failure(new Error('no meaning found'));

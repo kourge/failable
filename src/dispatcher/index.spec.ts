@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 
-import {Dispatcher} from '..';
+import {Dispatcher} from './';
 
 describe('Dispatcher', () => {
   type ABC = 'a' | 'b' | 'c';
