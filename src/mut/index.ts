@@ -13,6 +13,10 @@ export class Failable<T> {
   @observable protected data: T | Error | undefined = undefined;
   @observable protected state: Failable.State = State.pending;
 
+  toString(): string {
+    return `Failable { state=${this.state}, data=${this.data} }`;
+  }
+
   /**
    * Indicates if this Failable is a success.
    */
