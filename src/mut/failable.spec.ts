@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import {useStrict, computed, when} from 'mobx';
 
-import {Failable as F} from './';
+import {Failable as F} from './failable';
 
 const empty = () => {};
 const successValue = 3;
