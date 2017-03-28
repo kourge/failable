@@ -2,6 +2,7 @@ import {expect} from 'chai';
 import {useStrict, computed, when} from 'mobx';
 
 import {Failable as F} from './failable';
+import {Future} from './future';
 
 const empty = () => {};
 const successValue = 3;
@@ -12,7 +13,7 @@ useStrict(true);
 describe('Failable (mutable)', () => {
   class Failable<T> extends F<T> {
     @computed get internalData(): T | Error | undefined { return this.data; }
-    @computed get internalState(): F.State { return this.state; }
+    @computed get internalState(): Future.State { return this.state; }
 
     calledSuccess = false;
     didBecomeSuccess(_: T) { this.calledSuccess = true; }
@@ -28,7 +29,7 @@ describe('Failable (mutable)', () => {
     const f = new Failable<void>();
 
     it('initializes the state as "pending"', () => {
-      expect(f.internalState).to.eq(Failable.State.pending);
+      expect(f.internalState).to.eq(Future.State.pending);
     });
   });
 
@@ -37,7 +38,7 @@ describe('Failable (mutable)', () => {
     beforeEach(() => f = new Failable<number>().success(successValue));
 
     it('sets the internal state to "success"', () => {
-      expect(f.internalState).to.eq(Failable.State.success);
+      expect(f.internalState).to.eq(Future.State.success);
     });
 
     it('sets the internal data to the given value', () => {
@@ -56,7 +57,7 @@ describe('Failable (mutable)', () => {
     beforeEach(() => f = new Failable<number>().failure(failureValue));
 
     it('sets the internal state to "failure"', () => {
-      expect(f.internalState).to.eq(Failable.State.failure);
+      expect(f.internalState).to.eq(Future.State.failure);
     });
 
     it('sets the internal data to the given value', () => {
@@ -75,7 +76,7 @@ describe('Failable (mutable)', () => {
     beforeEach(() => f = new Failable<number>().pending());
 
     it('sets the internal state to "pending"', () => {
-      expect(f.internalState).to.eq(Failable.State.pending);
+      expect(f.internalState).to.eq(Future.State.pending);
     });
 
     it('invokes didBecomePending', () => {
@@ -228,7 +229,7 @@ describe('Failable (mutable)', () => {
       f.success(successValue);
       f.accept(never);
 
-      expect(f.internalState).to.eq(Failable.State.pending);
+      expect(f.internalState).to.eq(Future.State.pending);
     });
 
     it('transitions to "success" when the promise is fulfilled', () => {
@@ -236,7 +237,7 @@ describe('Failable (mutable)', () => {
 
       when(
         () => !f.isPending,
-        () => expect(f.internalState).to.eq(Failable.State.success)
+        () => expect(f.internalState).to.eq(Future.State.success)
       );
     });
 
@@ -245,7 +246,7 @@ describe('Failable (mutable)', () => {
 
       when(
         () => !f.isPending,
-        () => expect(f.internalState).to.eq(Failable.State.failure)
+        () => expect(f.internalState).to.eq(Future.State.failure)
       );
     });
   });
