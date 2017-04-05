@@ -1,3 +1,4 @@
+import {Enum} from 'typescript-string-enums';
 
 /**
  * Future is a reactive counterpart to a Promise with MobX semantics. It has
@@ -62,21 +63,12 @@ export interface Future<T> {
 }
 
 export namespace Future {
+  // tslint:disable-next-line:variable-name
+  export const State = Enum('pending', 'success', 'failure');
   /**
    * State represents the three possible states that a Future can fall under.
    */
-  export type State = State.Pending | State.Success | State.Failure;
-
-  export namespace State {
-    export const pending = 'pending';
-    export type Pending = typeof pending;
-
-    export const success = 'success';
-    export type Success = typeof success;
-
-    export const failure = 'failure';
-    export type Failure = typeof failure;
-  }
+  export type State = Enum<typeof State>;
 
   /**
    * MatchOptions is an object filled with callbacks. The `success` callback
