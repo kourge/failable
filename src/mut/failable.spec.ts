@@ -1,13 +1,12 @@
-import {expect} from 'chai';
+import {expect, use} from 'chai';
 import {useStrict, computed, when} from 'mobx';
+import sinon = require('sinon');
+import sinonChai = require('sinon-chai');
 
 import {Failable as F} from './failable';
 import {Future} from './future';
 
-const empty = () => {};
-const successValue = 3;
-const failureValue = new Error();
-
+use(sinonChai);
 useStrict(true);
 
 describe('Failable (mutable)', () => {
@@ -25,19 +24,30 @@ describe('Failable (mutable)', () => {
     didBecomePending() { this.calledPending = true; }
   }
 
+  const successValue = 3;
+  const failureValue = new Error();
+
+  type FailableFactory<T> = {[State in Future.State]: () => Failable<T>};
+
+  const make: FailableFactory<number> = {
+    pending: () => new Failable<number>().pending(),
+    success: () => new Failable<number>().success(successValue),
+    failure: () => new Failable<number>().failure(failureValue)
+  };
+
   describe('constructor', () => {
     const f = new Failable<void>();
 
-    it('initializes the state as "pending"', () => {
+    it('initializes the state as pending', () => {
       expect(f.internalState).to.eq(Future.State.pending);
     });
   });
 
   describe('success', () => {
     let f: Failable<number>;
-    beforeEach(() => f = new Failable<number>().success(successValue));
+    beforeEach(() => f = make.success());
 
-    it('sets the internal state to "success"', () => {
+    it('sets the internal state to success', () => {
       expect(f.internalState).to.eq(Future.State.success);
     });
 
@@ -54,9 +64,9 @@ describe('Failable (mutable)', () => {
 
   describe('failure', () => {
     let f: Failable<number>;
-    beforeEach(() => f = new Failable<number>().failure(failureValue));
+    beforeEach(() => f = make.failure());
 
-    it('sets the internal state to "failure"', () => {
+    it('sets the internal state to failure', () => {
       expect(f.internalState).to.eq(Future.State.failure);
     });
 
@@ -73,9 +83,9 @@ describe('Failable (mutable)', () => {
 
   describe('pending', () => {
     let f: Failable<number>;
-    beforeEach(() => f = new Failable<number>().pending());
+    beforeEach(() => f = make.pending());
 
-    it('sets the internal state to "pending"', () => {
+    it('sets the internal state to pending', () => {
       expect(f.internalState).to.eq(Future.State.pending);
     });
 
@@ -87,131 +97,77 @@ describe('Failable (mutable)', () => {
   });
 
   describe('isSuccess', () => {
-    let f: Failable<number>;
-    beforeEach(() => f = new Failable<number>().success(successValue));
-
     it('is true when success', () => {
-      expect(f.isSuccess).to.be.true;
+      expect(make.success().isSuccess).to.be.true;
     });
 
     it('is false when failure', () => {
-      expect(f.isFailure).to.be.false;
+      expect(make.failure().isSuccess).to.be.false;
     });
 
     it('is false when pending', () => {
-      expect(f.isPending).to.be.false;
+      expect(make.pending().isSuccess).to.be.false;
     });
   });
 
   describe('isFailure', () => {
-    let f: Failable<number>;
-    beforeEach(() => f = new Failable<number>().failure(failureValue));
-
     it('is false when success', () => {
-      expect(f.isSuccess).to.be.false;
+      expect(make.success().isFailure).to.be.false;
     });
 
     it('is true when failure', () => {
-      expect(f.isFailure).to.be.true;
+      expect(make.failure().isFailure).to.be.true;
     });
 
     it('is false when pending', () => {
-      expect(f.isPending).to.be.false;
+      expect(make.pending().isFailure).to.be.false;
     });
   });
 
   describe('isPending', () => {
-    let f: Failable<number>;
-    beforeEach(() => f = new Failable<number>().pending());
-
     it('is false when success', () => {
-      expect(f.isSuccess).to.be.false;
+      expect(make.success().isPending).to.be.false;
     });
 
     it('is false when failure', () => {
-      expect(f.isFailure).to.be.false;
+      expect(make.failure().isPending).to.be.false;
     });
 
     it('is true when pending', () => {
-      expect(f.isPending).to.be.true;
+      expect(make.pending().isPending).to.be.true;
     });
   });
 
   describe('match', () => {
-    const pending = new Failable<number>();
-    const success = new Failable<number>().success(successValue);
-    const failure = new Failable<number>().failure(failureValue);
-
-    it('invokes the pending handler', () => {
-      let called = false;
-      pending.match({
-        pending: () => called = true,
-        success: empty,
-        failure: empty
-      });
-
-      expect(called).to.be.true;
+    let success: sinon.SinonSpy;
+    let failure: sinon.SinonSpy;
+    let pending: sinon.SinonSpy;
+    beforeEach(() => {
+      [success, failure, pending] = [sinon.spy(), sinon.spy(), sinon.spy()];
     });
 
-    it('does not invoke other handlers when pending', () => {
-      const result: boolean[] = [];
-      pending.match({
-        pending: empty,
-        success: (_data) => result.push(true),
-        failure: (_error) => result.push(true)
-      });
+    it('invokes the pending handler', () => {
+      make.pending().match({success, failure, pending});
 
-      expect(result).to.be.empty;
+      expect(success).to.not.have.been.called;
+      expect(failure).to.not.have.been.called;
+      expect(pending).to.have.been.called;
     });
 
     it('invokes the success handler with the correct value', () => {
-      let called = false;
-      success.match({
-        pending: empty,
-        success: (data) => {
-          called = true;
-          expect(data).to.eq(successValue);
-        },
-        failure: empty
-      });
+      make.success().match({success, failure, pending});
 
-      expect(called).to.be.true;
+      expect(success).to.have.been.calledWith(successValue);
+      expect(failure).to.not.have.been.called;
+      expect(pending).to.not.have.been.called;
     });
 
-    it('does not invoke other handlers when success', () => {
-      const result: boolean[] = [];
-      success.match({
-        pending: () => result.push(true),
-        success: empty,
-        failure: (_error) => result.push(true)
-      });
+    it('invokes the failure handler with the correct error', () => {
+      make.failure().match({success, failure, pending});
 
-      expect(result).to.be.empty;
-    });
-
-    it('invokes the failure handler', () => {
-      let called = false;
-      failure.match({
-        pending: empty,
-        success: empty,
-        failure: (error) => {
-          called = true;
-          expect(error).to.eq(failureValue);
-        }
-      });
-
-      expect(called).to.be.true;
-    });
-
-    it('does not invoke other handlers when failure', () => {
-      const result: boolean[] = [];
-      failure.match({
-        pending: () => result.push(true),
-        success: (_data) => result.push(true),
-        failure: empty
-      });
-
-      expect(result).to.be.empty;
+      expect(success).to.not.have.been.called;
+      expect(failure).to.have.been.calledWith(failureValue);
+      expect(pending).to.not.have.been.called;
     });
   });
 
@@ -225,28 +181,35 @@ describe('Failable (mutable)', () => {
     let f: Failable<number>;
     beforeEach(() => f = new Failable<number>());
 
-    it('first transitions to "pending"', () => {
+    it('first transitions to pending', () => {
       f.success(successValue);
       f.accept(never);
 
       expect(f.internalState).to.eq(Future.State.pending);
+      expect(f.internalData).to.be.undefined;
     });
 
-    it('transitions to "success" when the promise is fulfilled', () => {
+    it('transitions to success when the promise is fulfilled', () => {
       f.accept(resolved);
 
       when(
         () => !f.isPending,
-        () => expect(f.internalState).to.eq(Future.State.success)
+        () => {
+          expect(f.internalState).to.eq(Future.State.success);
+          expect(f.internalData).to.eql(successValue);
+        }
       );
     });
 
-    it('transitions to "failure" when the promise is rejected', () => {
+    it('transitions to failure when the promise is rejected', () => {
       f.accept(rejected);
 
       when(
         () => !f.isPending,
-        () => expect(f.internalState).to.eq(Future.State.failure)
+        () => {
+          expect(f.internalState).to.eq(Future.State.failure);
+          expect(f.internalData).to.eql(failureValue);
+        }
       );
     });
   });
