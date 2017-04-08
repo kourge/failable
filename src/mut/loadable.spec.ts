@@ -84,30 +84,30 @@ describe('Loadable (mutable)', () => {
     });
   });
 
-  describe('pending', () => {
+  describe('loading', () => {
     it('sets the internal state to reloading when success', () => {
-      const l = make.success().pending();
+      const l = make.success().loading();
 
       expect(l.internalState).to.eq(L.State.reloading);
       expect(l.internalData).to.eq(successValue);
     });
 
     it('sets the internal state to retrying when failure', () => {
-      const l = make.failure().pending();
+      const l = make.failure().loading();
 
       expect(l.internalState).to.eq(L.State.retrying);
       expect(l.internalData).to.eq(failureValue);
     });
 
     it('sets the internal state to pending when empty', () => {
-      const l = make.empty().pending();
+      const l = make.empty().loading();
 
       expect(l.internalState).to.eq(L.State.pending);
       expect(l.internalData).to.eq(undefined);
     });
 
     it('invokes didBecomeLoading', () => {
-      const l = make.empty().pending();
+      const l = make.empty().loading();
 
       expect(l.calledSuccess).to.be.false;
       expect(l.calledFailure).to.be.false;
@@ -117,10 +117,20 @@ describe('Loadable (mutable)', () => {
     it('does nothing when already loading', () => {
       for (const l of [make.pending(), make.reloading(), make.retrying()]) {
         l.calledLoading = false;
-        l.pending();
+        l.loading();
 
         expect(l.calledLoading).to.be.false;
       }
+    });
+  });
+
+  describe('pending', () => {
+    it('calls `loading`', () => {
+      const l = make.empty();
+      const loading = sinon.spy(l, 'loading');
+      l.pending();
+
+      expect(loading).to.have.been.called;
     });
   });
 

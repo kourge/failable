@@ -89,6 +89,14 @@ export class Loadable<T> implements Future<T> {
   protected didBecomeFailure(_error: Error): void {}
 
   /**
+   * An alias to `loading`. Unlike standard Future behavior, calling this does
+   * not clear existing data.
+   */
+  @action.bound pending(): this {
+    return this.loading();
+  }
+
+  /**
    * Sets this Loadable to a loading state. If the current state is empty, the
    * new state is pending. If the current state is success, the new state is
    * reloading. If the current state is failure, the new state is retrying.
@@ -96,7 +104,7 @@ export class Loadable<T> implements Future<T> {
    * happens.
    * @returns This, enabling chaining.
    */
-  @action.bound pending(): this {
+  @action.bound loading(): this {
     switch (this.state) {
       case State.empty:
         this.state = State.pending;
@@ -153,7 +161,7 @@ export class Loadable<T> implements Future<T> {
    * @returns This, enabling chaining.
    */
   accept(promise: PromiseLike<T>): this {
-    this.pending();
+    this.loading();
     Promise.resolve(promise).then(this.success, this.failure);
     return this;
   }
