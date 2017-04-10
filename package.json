@@ -1,6 +1,6 @@
 {
   "name": "failable",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Simplify error state handling",
   "main": "index.js",
   "typings": "index",
