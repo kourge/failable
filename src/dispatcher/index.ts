@@ -1,9 +1,10 @@
+// tslint:disable-next-line:callable-types
 export interface Handler<T> {
   (a: T): any;
 }
 
 export class Dispatcher<State extends string> {
-  private allHandlers: {[key: string]: Handler<any>[]} = {};
+  private allHandlers: {[key: string]: Array<Handler<any>>} = {};
 
   constructor(public validStates: State[]) {
     const {allHandlers: handlers} = this;
@@ -16,7 +17,7 @@ export class Dispatcher<State extends string> {
    * Returns the raw handler array of a given state. This is intended for
    * low-level utilities, so there is no guard against mutation.
    */
-  handlersOf(state: State): Handler<any>[] {
+  handlersOf(state: State): Array<Handler<any>> {
     const handlers = this.allHandlers[state.toLowerCase()];
 
     if (handlers === undefined) {

@@ -1,4 +1,4 @@
-import {observable, action, computed} from 'mobx';
+import {action, computed, observable} from 'mobx';
 import {Future} from './future';
 import {Lazy} from './lazy';
 
@@ -52,7 +52,7 @@ export class Failable<T> implements Future<T> {
    * A lifecycle method that is invoked after this Failable becomes a success.
    * This can be overridden in a subclass.
    */
-  protected didBecomeSuccess(_data: T): void {}
+  protected didBecomeSuccess(_data: T): void { /* */ }
 
   /**
    * Sets this Failable to a failure.
@@ -70,7 +70,7 @@ export class Failable<T> implements Future<T> {
    * A lifecycle method that is invoked after this Failable becomes a success.
    * This can be overridden in a subclass.
    */
-  protected didBecomeFailure(_error: Error): void {}
+  protected didBecomeFailure(_error: Error): void { /* */ }
 
   /**
    * Sets this Failable to pending.
@@ -87,7 +87,7 @@ export class Failable<T> implements Future<T> {
    * A lifecycle method that is invoked after this Failable becomes pending.
    * This can be overridden in a subclass.
    */
-  protected didBecomePending(): void {}
+  protected didBecomePending(): void { /* */ }
 
   /**
    * Invokes one of the provided callbacks that corresponds this Failable's
@@ -130,7 +130,7 @@ export class Failable<T> implements Future<T> {
     return this.match({
       success: v => v,
       failure: () => Lazy.force(defaultValue),
-      pending: () => Lazy.force(defaultValue)
+      pending: () => Lazy.force(defaultValue),
     });
   }
 
@@ -144,7 +144,7 @@ export class Failable<T> implements Future<T> {
     return this.match({
       success: () => Lazy.force(defaultValue),
       failure: e => e,
-      pending: () => Lazy.force(defaultValue)
+      pending: () => Lazy.force(defaultValue),
     });
   }
 }

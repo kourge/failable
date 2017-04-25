@@ -1,6 +1,6 @@
 import {
-  Success, Pending, Failure,
-  isSuccess, isPending, isFailure
+  Failure, isFailure, isPending,
+  isSuccess, Pending, Success,
 } from '../common';
 import {Dispatcher, Handler} from '../dispatcher';
 
@@ -37,7 +37,7 @@ export namespace Failable {
   const dispatchOptions: WhenOptions<any, void, void, void> = {
     success: (data: any) => dispatch('success', data),
     pending: () => dispatch('pending', undefined),
-    failure: (data: Error) => dispatch('failure', data)
+    failure: (data: Error) => dispatch('failure', data),
   };
 
   /**
@@ -52,7 +52,7 @@ export namespace Failable {
    */
   export function when<T, A, B, C>(
     f: Failable<T>,
-    options: WhenOptions<T, A, B, C>
+    options: WhenOptions<T, A, B, C>,
   ): A | B | C {
     _when(f, dispatchOptions);
     return _when(f, options);
@@ -100,10 +100,10 @@ export const isFailable = Failable.is;
  */
 export function when<T, A, B, C>(
   f: Failable<T>,
-  options: Failable.WhenOptions<T, A, B, C>
+  options: Failable.WhenOptions<T, A, B, C>,
 ): A | B | C {
   const {
-    success: onSuccess, pending: onPending, failure: onFailure
+    success: onSuccess, pending: onPending, failure: onFailure,
   } = options;
 
   if (isSuccess<T>(f)) {
