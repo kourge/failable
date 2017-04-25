@@ -1,4 +1,5 @@
 import {Enum} from 'typescript-string-enums';
+import {Lazy} from './lazy';
 
 /**
  * Future is a reactive counterpart to a Promise with MobX semantics. It has
@@ -60,6 +61,22 @@ export interface Future<T> {
    * @returns This, enabling chaining.
    */
   accept(promise: PromiseLike<T>): this;
+
+  /**
+   * Returns this Future's success value if it is a success, or the provided
+   * default value if it is not.
+   * @param defaultValue A possibly lazy value to use in case of non-success
+   * @returns This Future's success value or the provided default value
+   */
+  successOr(defaultValue: Lazy<T>): T;
+
+  /**
+   * Returns this Future's error value if it is a failure, or the provided
+   * default error if it is not.
+   * @param defaultError A possibly lazy error to use in case of non-failure
+   * @returns this Future's failure error or the provided default error
+   */
+  failureOr(defaultError: Lazy<Error>): Error;
 }
 
 export namespace Future {
