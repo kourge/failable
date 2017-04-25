@@ -1,6 +1,7 @@
 import {observable, action, computed} from 'mobx';
 import {Enum} from 'typescript-string-enums';
 import {Future} from './future';
+import {Lazy} from './lazy';
 
 /**
  * Loadable is an extension of Failable. It has six states: empty, pending,
@@ -164,6 +165,34 @@ export class Loadable<T> implements Future<T> {
     this.loading();
     Promise.resolve(promise).then(this.success, this.failure);
     return this;
+  }
+
+  /**
+   * Returns this Loadable's success value if it is a success, or the provided
+   * default value if it is not.
+   * @param defaultValue A possibly lazy value to use in case of non-success
+   * @returns This Future's success value or the provided default value
+   */
+  successOr<U>(defaultValue: Lazy<U>): T | U {
+    return this.match({
+      success: v => v,
+      failure: () => Lazy.force(defaultValue),
+      pending: () => Lazy.force(defaultValue)
+    });
+  }
+
+  /**
+   * Returns this Loadable's error value if it is a failure, or the provided
+   * default value if it is not.
+   * @param defaultValue A possibly lazy value to use in case of non-failure
+   * @returns this Loadable's failure error or the provided default value
+   */
+  failureOr<U>(defaultValue: Lazy<U>): Error | U {
+    return this.match({
+      success: () => Lazy.force(defaultValue),
+      failure: e => e,
+      pending: () => Lazy.force(defaultValue)
+    });
   }
 }
 

@@ -213,4 +213,54 @@ describe('Failable (mutable)', () => {
       );
     });
   });
+
+  describe('successOr', () => {
+    const fallback = 'foo';
+
+    it('returns the value when success', () => {
+      const result = make.success().successOr(fallback);
+
+      expect(result).to.eql(successValue);
+      expect(result).to.not.eql(fallback);
+    });
+
+    it('returns the fallback when failure', () => {
+      const result = make.failure().successOr(fallback);
+
+      expect(result).to.not.eql(successValue);
+      expect(result).to.eql(fallback);
+    });
+
+    it('returns the fallback when pending', () => {
+      const result = make.pending().successOr(fallback);
+
+      expect(result).to.not.eql(successValue);
+      expect(result).to.eql(fallback);
+    });
+  });
+
+  describe('failureOr', () => {
+    const fallback = 'foo';
+
+    it('returns the fallback when success', () => {
+      const result = make.success().failureOr(fallback);
+
+      expect(result).to.not.eq(failureValue);
+      expect(result).to.eq(fallback);
+    });
+
+    it('returns the error when failure', () => {
+      const result = make.failure().failureOr(fallback);
+
+      expect(result).to.eq(failureValue);
+      expect(result).to.not.eq(fallback);
+    });
+
+    it('returns the fallback when pending', () => {
+      const result = make.pending().failureOr(fallback);
+
+      expect(result).to.not.eq(failureValue);
+      expect(result).to.eq(fallback);
+    });
+  });
 });
