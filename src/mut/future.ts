@@ -68,7 +68,7 @@ export interface Future<T> {
    * @param defaultValue A possibly lazy value to use in case of non-success
    * @returns This Future's success value or the provided default value
    */
-  successOr(defaultValue: Lazy<T>): T;
+  successOr<U>(defaultValue: Lazy<U>): T | U;
 
   /**
    * Returns this Future's error value if it is a failure, or the provided

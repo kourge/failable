@@ -319,7 +319,7 @@ describe('Loadable (mutable)', () => {
   });
 
   describe('successOr', () => {
-    const fallback = 4;
+    const fallback = 'foo';
 
     it('returns the value when success', () => {
       const result = make.success().successOr(fallback);
