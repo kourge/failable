@@ -1,5 +1,6 @@
 import {observable, action, computed} from 'mobx';
 import {Future} from './future';
+import {Lazy} from './lazy';
 
 const State = Future.State;
 
@@ -117,5 +118,33 @@ export class Failable<T> implements Future<T> {
     this.pending();
     Promise.resolve(promise).then(this.success, this.failure);
     return this;
+  }
+
+  /**
+   * Returns this Failable's success value if it is a success, or the provided
+   * default value if it is not.
+   * @param defaultValue A possibly lazy value to use in case of non-success
+   * @returns This Future's success value or the provided default value
+   */
+  successOr(defaultValue: Lazy<T>): T {
+    return this.match({
+      success: v => v,
+      failure: () => Lazy.force(defaultValue),
+      pending: () => Lazy.force(defaultValue)
+    });
+  }
+
+  /**
+   * Returns this Failable's error value if it is a failure, or the provided
+   * default error if it is not.
+   * @param defaultError A possibly lazy error to use in case of non-failure
+   * @returns this Future's failure error or the provided default error
+   */
+  failureOr(defaultError: Lazy<Error>): Error {
+    return this.match({
+      success: () => Lazy.force(defaultError),
+      failure: e => e,
+      pending: () => Lazy.force(defaultError)
+    });
   }
 }
