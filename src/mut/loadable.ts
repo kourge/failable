@@ -183,15 +183,15 @@ export class Loadable<T> implements Future<T> {
 
   /**
    * Returns this Loadable's error value if it is a failure, or the provided
-   * default error if it is not.
-   * @param defaultError A possibly lazy error to use in case of non-failure
-   * @returns this Future's failure error or the provided default error
+   * default value if it is not.
+   * @param defaultValue A possibly lazy value to use in case of non-failure
+   * @returns this Loadable's failure error or the provided default value
    */
-  failureOr(defaultError: Lazy<Error>): Error {
+  failureOr<U>(defaultValue: Lazy<U>): Error | U {
     return this.match({
-      success: () => Lazy.force(defaultError),
+      success: () => Lazy.force(defaultValue),
       failure: e => e,
-      pending: () => Lazy.force(defaultError)
+      pending: () => Lazy.force(defaultValue)
     });
   }
 }

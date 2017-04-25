@@ -240,7 +240,7 @@ describe('Failable (mutable)', () => {
   });
 
   describe('failureOr', () => {
-    const fallback = new Error();
+    const fallback = 'foo';
 
     it('returns the fallback when success', () => {
       const result = make.success().failureOr(fallback);
