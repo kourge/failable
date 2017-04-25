@@ -1,82 +1,27 @@
 {
+  "extends": "tslint:recommended",
   "rules": {
-    "class-name": true,
-    "comment-format": [
+    "arrow-parens": [
       true,
-      "check-space"
+      "ban-single-arg-parens"
     ],
-    "curly": true,
-    "eofline": true,
-    "indent": [
+    "interface-name": [false],
+    "member-access": [
       true,
-      "spaces"
+      "no-public"
     ],
-    "new-parens": true,
-    "no-angle-bracket-type-assertion": true,
-    "no-arg": true,
-    "no-consecutive-blank-lines": true,
-    "no-console": [
-      true,
-      ["log", "info", "error", "warn"]
-    ],
-    "no-debugger": true,
-    "no-eval": true,
-    "no-inferrable-types": [
-      true,
-      "ignore-params"
-    ],
-    "no-internal-module": true,
-    "no-switch-case-fall-through": true,
-    "no-trailing-whitespace": true,
-    "no-var-keyword": true,
-    "one-line": [
-      true,
-      "check-catch",
-      "check-else",
-      "check-open-brace",
-      "check-whitespace"
-    ],
+    "member-ordering": [false],
+    "object-literal-sort-keys": false,
+    "no-namespace": [false],
     "quotemark": [
       true,
       "single",
       "jsx-double",
       "avoid-escape"
     ],
-    "radix": true,
-    "semicolon": true,
-    "trailing-comma": [
-      true,
-      {
-        "multiline": "never",
-        "singleline": "never"
-      }
-    ],
-    "triple-equals": true,
-    "typedef-whitespace": [
-      true,
-      {
-        "call-signature": "nospace",
-        "index-signature": "nospace",
-        "parameter": "nospace",
-        "property-declaration": "nospace",
-        "variable-declaration": "nospace"
-      }
-    ],
-    "use-isnan": true,
     "variable-name": [
       true,
-      "check-format",
-      "allow-leading-underscore",
-      "ban-keywords"
-    ],
-    "whitespace": [
-      true,
-      "check-branch",
-      "check-decl",
-      "check-operator",
-      "check-module",
-      "check-separator",
-      "check-type"
+      "allow-leading-underscore"
     ]
   }
 }
