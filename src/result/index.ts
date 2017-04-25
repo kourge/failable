@@ -1,4 +1,4 @@
-import {Success, Failure, success, failure} from '../common';
+import {Failure, failure, Success, success} from '../common';
 
 /**
  * A Result represents a successful value or a failure with an error.

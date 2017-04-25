@@ -1,13 +1,13 @@
 export {
   Success, Failure, Pending,
   success, failure, pending,
-  isSuccess, isFailure, isPending
+  isSuccess, isFailure, isPending,
 } from './common';
 
 export {
-  Failable, isFailable, when
+  Failable, isFailable, when,
 } from './failable';
 
 export {
-  Result, toResult
+  Result, toResult,
 } from './result';

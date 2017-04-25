@@ -1,4 +1,4 @@
-import {observable, action, computed} from 'mobx';
+import {action, computed, observable} from 'mobx';
 import {Enum} from 'typescript-string-enums';
 import {Future} from './future';
 import {Lazy} from './lazy';
@@ -69,7 +69,7 @@ export class Loadable<T> implements Future<T> {
    * A lifecycle method that is invoked after this Loadable becomes a success.
    * This can be overridden in a subclass.
    */
-  protected didBecomeSuccess(_data: T): void {}
+  protected didBecomeSuccess(_data: T): void { /* */ }
 
   /**
    * Sets this Loadable to a failure.
@@ -87,7 +87,7 @@ export class Loadable<T> implements Future<T> {
    * A lifecycle method that is invoked after this Loadable becomes a success.
    * This can be overridden in a subclass.
    */
-  protected didBecomeFailure(_error: Error): void {}
+  protected didBecomeFailure(_error: Error): void { /* */ }
 
   /**
    * An alias to `loading`. Unlike standard Future behavior, calling this does
@@ -128,7 +128,7 @@ export class Loadable<T> implements Future<T> {
    * A lifecycle method that is invoked after this Loadable becomes a loading
    * state. This can be overridden in a subclass.
    */
-  protected didBecomeLoading(): void {}
+  protected didBecomeLoading(): void { /* */ }
 
   /**
    * Invokes one of the provided callbacks that corresponds this Loadable's
@@ -177,7 +177,7 @@ export class Loadable<T> implements Future<T> {
     return this.match({
       success: v => v,
       failure: () => Lazy.force(defaultValue),
-      pending: () => Lazy.force(defaultValue)
+      pending: () => Lazy.force(defaultValue),
     });
   }
 
@@ -191,7 +191,7 @@ export class Loadable<T> implements Future<T> {
     return this.match({
       success: () => Lazy.force(defaultValue),
       failure: e => e,
-      pending: () => Lazy.force(defaultValue)
+      pending: () => Lazy.force(defaultValue),
     });
   }
 }
@@ -228,7 +228,7 @@ export namespace Loadable {
     /**
      * Denotes the presence of an error and a request in flight.
      */
-    retrying: 'retrying'
+    retrying: 'retrying',
   });
 
   /**
